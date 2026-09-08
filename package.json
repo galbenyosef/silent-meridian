@@ -1,0 +1,15 @@
+{
+  "name": "silent-meridian",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An original atmospheric browser puzzle game about a minute that never ended.",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.mjs",
+    "build": "node build.mjs",
+    "preview": "node server.mjs --dist",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": { "node": "22.x" },
+  "license": "MIT"
+}
