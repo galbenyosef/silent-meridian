@@ -1,41 +1,38 @@
-# Verification — 2026-09-08
+# Verification — chapter expansion, 2026-09-08
 
 ## Automated checks
 
-`npm test`: 19 passing tests. These cover:
+`npm test`: **35 passing tests**. `npm run build`: static `dist/` generated successfully.
 
-- A unique solution for the archive constraints and the derived radio frequencies.
-- Reachability of all 4,096 tide states, inverse gear operations, and adaptive hints from the current configuration (including the final starting state).
-- Final-orbit dependencies and the Echo → Present completion gate.
-- Both endings, validated save recovery, local-storage failure handling, and personal-note persistence.
-- Chinese/English copy completeness, translation key resolution, and local PNG scene assets.
+- Unique solutions for the opening archive/radio and the new ferry route, lamp testimony, six mirrors, five-cycle cultivation, specimen cabinet, causal archive and shutter overlay.
+- Reachability of all 4,096 tide positions, inverse operations and adaptive tide hints.
+- Exact adaptive solutions for all 512 electrical-bridge boards.
+- Phase gates, valid ending choices, independent chapter state, contiguous unlocks, solved-puzzle protection, narrow puzzle resets and retained started status.
+- Migration of version-one saves with partial and completed first-chapter progress, language, preferences and personal notes. Invalid flags cannot forge completion.
+- Both original endings and both campaign endings; full save round trips.
+- Bilingual interface, story, hints, evidence, and real local PNG scene assets.
 
-`npm run build`: static `dist/` output completed successfully.
+## Actual browser playthrough
 
-## Actual browser checks
+The Codex in-app browser was used with real buttons and text fields on a separate `localhost:4190` origin. No solved state was injected. The user's `localhost:4188` save was kept separate.
 
-Used the Codex in-app browser and its real buttons, controls and text fields, without injecting a solved state.
+1. Completed the original archive, radio, tide and meridian. Anchored in the Echo, returned to the Present and chose to keep the tape. Verified that the next-chapter button appeared.
+2. Entered the ferry, collected Present and Echo records, tested a wrong route, backtracked and completed the ten-move crossing. Reloaded midway and resumed with the solved route intact. Switched to English. Solved the lamp statements, changed the electrical board, requested all three hints, followed its new state-dependent solution and grounded the bridge. Verified that an Echo exit requires returning to the Present.
+3. Entered the conservatory, collected both records, and completed six-mirror tracing at phone size. Verified the live beam reached the receiver through all six mirrors. Tried an invalid cultivation program, reset it, and confirmed every intermediate value of the correct program. Completed the specimen cabinet. Entered a mixed Chinese/English personal deduction and verified carried results from prior chapters.
+4. Entered the lighthouse. Confirmed that origin coordinates were locked before the two preceding instruments. Collected both records, reordered causal events, aligned all three shutter layers, and entered the coordinates from the carried journal results. Reached the final choice in the Present.
+5. Completed the carry-records ending, reloaded and resumed at that ending, and verified the personal deduction survived. Revisited the lighthouse and completed the seal-instruments ending. Switched to Chinese and verified the final text recalls the original tape choice.
+6. Revisited all earlier chapters through the directory. Completed mechanisms, phase, notes and chapter progress remained independent.
 
-- Started a fresh Chinese game, collected both archive clues, verified incorrect-answer feedback, then solved the archive.
-- Reloaded, resumed, switched to English, collected and solved the radio with visible values and optional signal playback.
-- Collected both tidal clues. Reset the tide to the final starting configuration, changed a dial, and verified that the final hint updated. Followed that plan to all zeroes and calibrated.
-- Read the final inscription and unfinished letter. Confirmed the final instrument offers a time shift in the Present, anchored the correct orbits in the Echo, returned to the Present and reached the ending choice.
-- Completed both endings. Reloaded a completed game and verified the ending and a mixed Chinese/English personal note survived.
-- No console errors or warnings were reported during this route.
+Browser console errors and warnings: **none reported** during the complete route and final layout checks.
 
-## Responsive checks
+## Responsive verification
 
-For every room in both time states, checked that the hotspot buttons were inside the viewport and that their centers were hit-testable (not behind navigation). All **32 combinations** passed; none produced horizontal page overflow.
+Checked actual DOM geometry and hit testing of every scene hotspot, navigation button and side-tool button. Checks also covered horizontal overflow, chapter title/description overlap and overlap between new chapter hotspot labels.
 
-| Viewport | Purpose | Room/time combinations |
-| --- | --- | --- |
-| 844 × 390 | Short landscape phone | 8 |
-| 820 × 1180 | Portrait tablet | 8 |
-| 1280 × 800 | Desktop | 8 |
-| 390 × 844 | Portrait phone | 8 |
+- New chapters II–IV: both languages and both time states at **320 × 640, 390 × 844, 720 × 800, 844 × 390, and 1280 × 800**. These are 60 distinct chapter/language/time/viewport combinations; affected layouts were retested after fixes.
+- Original chapter: all four rooms in both time states at **390 × 844, 720 × 800, and 844 × 390**, in English (24 combinations). All hotspot/navigation/tool centers remained usable.
+- Actual phone-size screenshots were inspected for the live mirror beam, cultivation controls, shutter overlay and narrow English scene layout. Screenshots of the three new locations and mirror puzzle are retained in `docs/screenshots/`.
 
-Portrait phone screenshots were also inspected for the tide and final-orbit controls; both were operated successfully. The viewport override was reset after testing.
+Fixed during verification: low scene markers near navigation, long English labels intersecting on small scenes, a long heading colliding with its description at 320 pixels, narrow-screen side-tool placement, chapter-directory started status, and current-chapter journal counts.
 
-The code review found portrait cropping and short-landscape navigation overlap. Both were fixed and checked again. Edge clue labels now face inward; the journal retains an accessible name when its visual text is hidden.
-
-The temporary playthrough was cleared through the game’s own restart confirmation, leaving an opening game for the user. This is a browser-engine check, not a test on physical Android/iOS devices.
+An independent code review found no important remaining issue after these changes. Browser emulation is not physical Android/iOS device testing. The viewport override and temporary test tab/server were cleaned up after verification.

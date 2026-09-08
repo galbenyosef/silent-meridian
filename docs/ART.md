@@ -21,3 +21,13 @@ Create one cinematic 16:9 full-screen background for an original web puzzle game
 Use case: stylized-concept. Original atmospheric puzzle game background, single 16:9 cinematic frame. First-person eye-level view of a vast subterranean tidal chamber beneath an old coastal observatory. Vaulted stone nave, haunting teal light, shallow still water reflecting the architecture. Central-right: four large vertical brass pendulums and hanging concentric wheels mounted side by side on an enormous dark metal wall, amber lamps at their bases, a control pedestal below. Left foreground: a stone ledge with a water-level chart etched in brass. Right: a corroded mechanism with a lever and observation gauge. A round portal of pale teal light in the far left background. Thick copper pipes follow the stone walls. Sublime industrial geometry, weathered materials, mist, rich shadows with clear props, muted brass highlights. Hand-painted 3D concept art. No people, text, logos, interface or borders. Entirely original design.
 
 The generated background is decorative: all exact numbers, symbols, clues, and interactive controls are rendered by the game itself, so gameplay does not depend on invented lettering in the artwork.
+
+## Chapter expansion — 2026-09-08
+
+Three additional backgrounds were generated with the same built-in OpenAI image generation tool, without reference images. The campaign now uses seven local scenes. No generated letters or numbers serve as puzzle clues.
+
+- `assets/ferry.png`: original 16:9 coastal ferry terminal after midnight; monumental basalt arches, pearl-grey fog, wet black stone, tarnished brass chart in the left foreground, four signal lamps in the middle, electrical switching cabinet on the right, empty berth in the distance. Restrained silver-blue and amber lighting, no people, UI, text, or existing-game references.
+- `assets/garden.png`: original 16:9 conservatory beneath the ocean; ribbed glass dome, suspended water, luminous roots, translucent leaves, optical bench on the left, seed vessel in the center, specimen cabinet on the right, single artificial sun. Green-gold light and slate-teal shadows; no people, text, UI, or reference assets.
+- `assets/lighthouse.png`: original 16:9 interior of the zeroth lighthouse before dawn; open circular basalt hall, ash-violet sky, thin rose-gold horizon, floating brass ring, causal tablets to the left, celestial compass in the center, shutter console on the right, blank stone door beyond. Quiet painterly architectural realism; no people, lettering, UI, or existing-game references.
+
+The nine new instruments, live beam, growth preview, route and layered-shadow diagrams are drawn by the game in HTML/CSS/SVG. Exact diagrams remain independent of the decorative backgrounds.

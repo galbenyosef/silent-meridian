@@ -1,4 +1,6 @@
+import { campaignWords } from './chapters.js';
 export const words = {
+  ...campaignWords,
   title: ['静默子午线', 'Silent Meridian'],
   subtitle: ['一座观测站。一个没有结束的夜晚。', 'One observatory. One night that never ended.'],
   tagline: ['世界停在 00:17。\n只有你的影子，还在往前走。', 'The world stopped at 00:17.\nYour shadow kept moving.'],

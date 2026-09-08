@@ -442,3 +442,167 @@ html[data-phase=echo] { --cyan:#d1b98c; }
   *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
   .dust { display:none; }
 }
+
+/* Campaign: parchment itinerary and nine instruments, within the original scene shell. */
+.campaign-title-meta { color:#a4ad9e; font-size:9px; letter-spacing:1px; margin-top:11px; line-height:1.6; }
+.title-chapters { margin-top:8px; margin-right:22px; }
+.title-restart { margin-top:8px; }
+.chapters-modal { width:min(760px,calc(100vw - 40px)); }
+.chapter-list { display:flex; flex-direction:column; }
+.chapter-row { display:flex; align-items:center; gap:22px; width:100%; text-align:left; padding:20px 0; border-top:1px solid var(--line); }
+.chapter-row>img { width:118px; height:88px; object-fit:cover; opacity:.8; flex-shrink:0; }
+.chapter-row>.icon { flex-shrink:0; color:var(--gold); margin-left:auto; }
+.chapter-row.current { border-top-color:#c6ae7680; }
+.chapter-row:disabled { opacity:.46; }
+.chapter-row:hover:not(:disabled) img { opacity:1; }
+.chapter-list-copy { display:flex; flex-direction:column; gap:8px; }
+.chapter-list-copy small { font-size:8px; letter-spacing:1.3px; color:var(--gold); }
+.chapter-list-copy strong { font:25px/1.3 var(--serif); color:var(--paper); letter-spacing:1px; }
+.chapter-list-copy>span { font-size:10px; line-height:1.8; color:#a2b0a2; }
+.chapter-room-nav button { min-width:155px; }
+.chapter-stage .point-label { max-width:128px; width:max-content; white-space:normal; text-align:center; line-height:1.5; }
+.chapter-stage .hotspot[data-action^="chapter-puzzle"] .point-label { left:50%; right:auto; transform:translateX(-50%); }
+.chapter-record { padding:0 0 15px; margin-bottom:20px; border-bottom:1px solid var(--line); }
+.chapter-record h4,.travel-records h4 { color:var(--paper); font:17px/1.5 var(--serif); margin:15px 0 12px; }
+.chapter-record p,.travel-records p { font-size:11px; line-height:2; color:#aebbad; }
+.journal-section-title,.travel-records h3 { color:var(--gold); font-size:11px; letter-spacing:1.5px; margin:18px 0; }
+.travel-records { margin-top:24px; padding-top:5px; border-top:1px solid var(--line); }
+.travel-records article { padding:5px 0; }
+.route-caption { display:flex; justify-content:space-between; flex-wrap:wrap; gap:9px; font:10px var(--mono); color:var(--gold); margin-bottom:18px; }
+.route-board { display:grid; grid-template-columns:repeat(4,1fr); position:relative; width:min(100%,330px); margin:auto; border:1px solid var(--line); background:#0b191c; }
+.route-board>svg { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+.route-board polyline { stroke:#c9b47c; stroke-width:2; fill:none; }
+.route-cell { position:relative; aspect-ratio:1; border:1px solid #849a7a25; color:#90a796; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.route-cell small { position:absolute; top:8px; left:8px; font:8px var(--mono); }
+.route-cell strong { font:27px var(--serif); }
+.route-cell b { position:absolute; right:6px; bottom:5px; font:8px var(--mono); }
+.route-cell:disabled { background:repeating-linear-gradient(135deg,#87918410 0 1px,transparent 1px 6px); opacity:.45; }
+.route-cell.visited { color:#e7d8a9; background:#c6aa6b0b; }
+.route-cell.route-end { box-shadow:inset 0 0 0 1px var(--gold); }
+.route-cell:hover:not(:disabled) { background:#bbac751a; }
+.testimony-lamps { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+.testimony-lamps button { display:flex; flex-direction:column; align-items:center; gap:16px; padding:17px 3px; border:1px solid var(--line); background:#112226; }
+.testimony-lamps button>span { font:18px var(--serif); color:var(--gold); }
+.testimony-lamps small { font-size:9px; color:#aebdab; }
+.lamp-bulb { display:block; width:49px; height:49px; border-radius:50%; border:4px solid #7c6b474d; background:radial-gradient(circle at 40% 40%,#354644,#0b1b1d); box-shadow:0 0 0 4px #0c191d; }
+.lit .lamp-bulb { background:radial-gradient(circle at 40% 35%,#fff1c7,#d49d49 70%,#967646); box-shadow:0 0 22px #e0ba624d,0 0 0 4px #74644655; }
+.bridge-board { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; width:min(100%,270px); margin:auto; }
+.bridge-board button { aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; border:1px solid #8a9b703e; background:#0b1c1f; }
+.bridge-board small { font:9px var(--mono); color:#b2bda5; }
+.bridge-bulb { width:21px; height:21px; border:1px solid #71877766; background:#263d34; border-radius:4px; }
+.lit .bridge-bulb { background:#e2c47f; border-color:#ffedb3; box-shadow:0 0 18px #d4b76855; }
+.bridge-board button:hover,.testimony-lamps button:hover { border-color:var(--gold); }
+.optical-bench { position:relative; width:min(100%,390px); aspect-ratio:1; margin:0 auto; }
+.mirror-grid { position:absolute; inset:8.333%; display:grid; grid-template-columns:repeat(5,1fr); background:#0a1a1c; border:1px solid var(--line); }
+.mirror-grid>* { min-width:0; border:1px solid #81987b29; }
+.mirror-cell { position:relative; color:var(--paper); background:#22362d; }
+.mirror-cell strong { font:42px/1 var(--serif); }
+.mirror-cell small { position:absolute; top:5px; left:5px; color:var(--gold); font:7px var(--mono); }
+.mirror-cell:hover { background:#46503a; }
+.beam-overlay { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+.beam-overlay polyline { stroke:#ffdb86; fill:none; stroke-width:.022; filter:drop-shadow(0 0 .035px #fff0a3); }
+.beam-source,.beam-target { position:absolute; left:0; top:50%; transform:translateY(-50%); color:#dcb871; font-size:21px; }
+.beam-target { left:auto; right:0; top:83.333%; color:#829987; }
+.beam-target.lit { color:#ffeeae; text-shadow:0 0 15px #e1c178; }
+.puzzle-live-status { text-align:center; color:var(--gold); font-size:10px; line-height:1.8; }
+.climate-sequence { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+.climate-card { display:flex; flex-direction:column; align-items:center; gap:9px; padding:12px 4px; border:1px solid var(--line); color:var(--paper); }
+.climate-card small { font:8px var(--mono); color:#8ca690; }
+.climate-card strong { font:30px/1.3 var(--serif); color:var(--gold); }
+.climate-card span { font-size:10px; }
+.climate-card:hover { background:#c5b07614; }
+.growth-target { font:10px/1.8 var(--mono); color:var(--gold); text-align:center; margin:20px 0 12px; }
+.growth-history { border-collapse:collapse; width:100%; font:11px/1.7 var(--mono); color:#b5c2ac; }
+.growth-history td,.growth-history th { text-align:center; padding:7px; border-bottom:1px solid #89967526; font-weight:400; }
+.growth-history th { color:#8fa48e; font-size:10px; }
+.growth-history tr:last-child td { color:var(--gold); }
+.specimen-grid { width:min(100%,320px); margin:auto; display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+.specimen-grid button { position:relative; aspect-ratio:1; border:1px solid #96a27c66; color:var(--gold); font:30px var(--serif); background:#1c302a; }
+.specimen-grid button.fixed { background:#0d1e21; color:#d6d4b7; opacity:1; }
+.specimen-grid .fixed i { position:absolute; top:5px; right:5px; width:3px; height:3px; background:#bcb990; border-radius:50%; }
+.specimen-grid button:hover:not(:disabled) { border-color:var(--gold); background:#293d2f; }
+.causal-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px; }
+.causal-list li { display:flex; align-items:center; gap:14px; padding:10px 12px; border:1px solid var(--line); background:#0c1f20; }
+.causal-list small { font:9px var(--mono); color:var(--gold); }
+.causal-list li>span { color:var(--paper); font-size:12px; }
+.causal-list li>div { display:flex; gap:5px; margin-left:auto; }
+.causal-list .dial-turn { width:29px; height:30px; }
+.shutter-comparison { display:flex; align-items:center; justify-content:center; gap:30px; color:var(--gold); }
+.shutter-comparison figure { width:108px; margin:0; }
+.shutter-comparison figcaption { min-height:30px; font-size:10px; text-align:center; color:var(--gold); }
+.shutter-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; aspect-ratio:1; padding:5px; border:1px solid #9eac7c4d; background:#091c1d; }
+.shutter-grid i { border:1px solid #7f967b1f; background:#1b332c; }
+.shutter-grid i.lit { background:#d8c07e; box-shadow:0 0 8px #c6ad5933; }
+.shutter-layers { display:grid; grid-template-columns:repeat(3,1fr); gap:27px; margin:26px 15px 0; padding-top:20px; border-top:1px solid var(--line); }
+.shutter-layers>div { text-align:center; }
+.shutter-layers>div>span { font:9px var(--mono); color:#a7b598; display:block; margin-bottom:12px; }
+.shutter-layers .dial-turn { margin-top:12px; width:45px; }
+.origin-digits { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+.origin-digits>div { display:flex; flex-direction:column; align-items:center; gap:10px; }
+.origin-digits small { font:9px var(--mono); color:#819886; }
+.origin-digits output { color:var(--paper); font:46px var(--serif); margin:8px 0; }
+.origin-digits .dial-turn { width:42px; }
+.ending-actions { flex-wrap:wrap; }
+.ending-content { max-height:calc(100svh - 120px); overflow:auto; scrollbar-width:thin; padding:5px 0 15px; }
+.campaign-ending .ending-copy { line-height:1.95; }
+.echo-callback { color:#c5b785; font-style:italic; }
+@media (max-width:1100px) and (min-width:701px) {
+  .chapter-room-nav button { min-width:130px; }
+}
+@media (min-width:701px) and (max-width:900px) {
+  .side-tools { bottom:124px; }
+}
+@media (max-width:700px) {
+  .campaign-title-meta { font-size:8px; letter-spacing:.4px; }
+  .title-content { top:47%; transform:translateY(-43%); }
+  .chapter-row { gap:12px; padding:18px 0; }
+  .chapter-row>img { width:72px; height:80px; }
+  .chapter-list-copy { gap:5px; }
+  .chapter-list-copy strong { font-size:19px; }
+  .chapter-list-copy small { font-size:7px; letter-spacing:.5px; }
+  .chapter-list-copy>span { font-size:9px; line-height:1.7; }
+  .chapter-row>.icon { width:16px; }
+  .chapters-modal { width:calc(100vw - 24px); }
+  .chapter-room-nav { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .chapter-room-nav button { min-width:0; font-size:9px; }
+  body:not([data-chapter="1"]) .room-heading { max-width:calc(100vw - 185px); }
+  body:not([data-chapter="1"]) .room-heading h1 { font-size:20px; letter-spacing:1px; }
+  body:not([data-chapter="1"]) .room-heading p { top:171px; line-height:1.7; max-height:32px; overflow:hidden; }
+  body[data-screen="game"]:not([data-chapter="1"]) .stage { top:205px; }
+  body:not([data-chapter="1"]) .room-heading .eyebrow { font-size:6px; }
+  .chapter-stage .point-label { max-width:22vw; width:max-content; white-space:normal; text-align:center; line-height:1.5; }
+  .chapter-stage .hotspot[data-action^="chapter-puzzle"] .point-label { left:50%; right:auto; transform:translateX(-50%); }
+  .campaign-tools { bottom:139px; }
+  .testimony-lamps { gap:8px; }
+  .lamp-bulb { width:37px; height:37px; border-width:3px; }
+  .testimony-lamps button { gap:12px; padding:13px 2px; }
+  .climate-sequence { gap:5px; }
+  .climate-card { padding:10px 2px; }
+  .climate-card strong { font-size:25px; }
+  .climate-card span { font-size:9px; }
+  .route-caption { font-size:9px; }
+  .mirror-cell strong { font-size:33px; }
+  .mirror-cell small { top:3px; left:3px; font-size:6px; }
+  .shutter-layers { gap:14px; margin-left:3px; margin-right:3px; }
+  .shutter-layers>div>span { font-size:8px; }
+  .shutter-comparison { gap:23px; }
+  .causal-list li { gap:9px; padding:9px; }
+  .causal-list li>span { font-size:11px; }
+  .origin-digits { gap:8px; }
+  .ending-content { max-height:calc(100svh - 115px); transform:translate(-50%,-43%); }
+  .campaign-ending .ending-clock { font-size:56px; }
+}
+@media (max-height:600px) {
+  .campaign-title-meta { display:none; }
+  .title-chapters,.title-restart { margin-top:0; min-height:31px; }
+  .ending-content { top:82px; transform:translateX(-50%); max-height:calc(100svh - 95px); }
+  .ending-clock { font-size:46px; margin:4px 0; }
+  .ending-content h1 { font-size:24px; margin:12px 0; }
+  .ending-actions { margin-top:14px; }
+}
+@media (max-height:500px) and (min-width:701px) {
+  .chapter-stage .point-label { max-width:84px; }
+}
+@media (max-width:370px) {
+  body:not([data-chapter="1"]) .room-heading h1 { font-size:18px; letter-spacing:.6px; }
+}

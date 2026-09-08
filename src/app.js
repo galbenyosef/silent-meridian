@@ -1,6 +1,8 @@
 import { freshState, loadState, saveState, addNote, placeSymbol, turnTide, tidePlan, solvePuzzle, allCalibrated, canFinish, finish, mod, TIDE_INITIAL, SYMBOL_IDS, ROOM_IDS } from './game.js';
 import { words, rooms, notes, symbols, puzzleNotes, hints } from './content.js';
 import { Atmosphere } from './audio.js';
+import { CHAPTER_PUZZLES, selectChapter, submitChapterPuzzle, changeChapterPuzzle, resetChapterPuzzle, completeChapter } from './campaign.js';
+import { expeditionView } from './expedition.js';
 
 const app = document.querySelector('#app');
 let storage;
@@ -41,6 +43,24 @@ const icon = (name, cls = '') => `<svg class="icon ${cls}" width="22" height="22
 const logo = () => '<svg class="brand-mark" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width=".9" aria-hidden="true"><circle cx="24" cy="24" r="16"/><ellipse cx="24" cy="24" rx="8" ry="22" transform="rotate(28 24 24)"/><path d="M2 24h44M24 2v44"/><circle cx="24" cy="24" r="2" fill="currentColor"/></svg>';
 const button = (label, action, cls = '', extra = '') => `<button class="${cls}" data-action="${action}" data-focus="${action}" ${extra}>${label}</button>`;
 const countSolved = () => Object.values(state.solved).filter(Boolean).length;
+const currentPhase = () => state.campaign.active === 1 ? state.phase : state.campaign.chapters[state.campaign.active].phase;
+const expedition = () => expeditionView(state, {t, esc, prose, button, icon, logo, commonTools});
+
+function enterChapter(id) {
+  if (!selectChapter(state, id)) return;
+  const first = !state.started;
+  state.started = true;
+  journalFilter = 'all'; selectedSlot = 0; modal = null;
+  if (id === 1) {
+    screen = state.ending ? 'ending' : 'game';
+    if (first) {addNote(state, 'welcome'); state.visits.push('observatory'); modal = {type:'briefing'};}
+  } else {
+    const chapter = state.campaign.chapters[id];
+    screen = chapter.complete ? 'ending' : 'game';
+    if (!chapter.complete && !chapter.inspected.length && !Object.values(chapter.solved).some(Boolean)) modal = {type:'chapter-briefing'};
+  }
+  persist(); render();
+}
 
 function persist() {
   saveAvailable = saveState(storage, state);
@@ -66,7 +86,8 @@ function visit(room) {
   persist(); render(); audio.tone(150, .2, 0, .1);
 }
 function shift() {
-  state.phase = state.phase === 'present' ? 'echo' : 'present';
+  const target = state.campaign.active === 1 ? state : state.campaign.chapters[state.campaign.active];
+  target.phase = target.phase === 'present' ? 'echo' : 'present';
   audio.shift(); persist(); render();
 }
 
@@ -105,9 +126,10 @@ function titleHTML() {
     <div class="title-caption">${state.lang === 'zh' ? 'S I L E N T  M E R I D I A N' : 'THE UNFINISHED NIGHT'}</div>
     <p class="tagline">${esc(t('tagline')).replace('\n', '<br>')}</p>
     ${button(`<span>${t(state.started ? 'resume' : 'enter')}</span>${icon('arrow')}`, 'start', 'primary enter-button')}
-    <div class="title-meta">${esc(t('noTimer'))}</div>
+    <div class="title-meta">${esc(t('noTimer'))}</div><div class="campaign-title-meta">${t('campaignSubtitle')}</div>
+    ${button(icon('archive') + t('chapters'), 'chapters', 'text-button title-chapters')}
     ${state.started ? button(t('newGame'), 'restart', 'text-button title-restart') : ''}
-    </main><footer class="title-footer"><span>${esc(t('original'))}</span><span class="title-coordinate">09° 17′ N <b>／</b> TIME UNKNOWN</span><span>01 <i>—</i> ∞</span></footer>`;
+    </main><footer class="title-footer"><span>${esc(t('original'))}</span><span class="title-coordinate">09° 17′ N <b>／</b> TIME UNKNOWN</span><span>I <i>—</i> IV</span></footer>`;
 }
 
 function phaseHTML() {
@@ -116,6 +138,7 @@ function phaseHTML() {
 function objective() { return t(state.ending ? 'objectiveDone' : state.anchor ? 'objectiveAnchor' : allCalibrated(state) ? 'objectiveFinal' : 'objectiveStart'); }
 
 function gameHTML() {
+  if (state.campaign.active > 1) return expedition().game(saveAvailable);
   const room = rooms[state.room];
   return `${sceneHTML()}
     <header class="topbar game-bar"><div class="brand compact">${logo()}<span>${esc(t('title'))}</span></div>${phaseHTML()}${commonTools()}</header>
@@ -123,7 +146,7 @@ function gameHTML() {
     <div class="station-clock"><span>${t(state.phase === 'echo' ? 'echoTime' : 'presentTime')}</span><strong>${state.ending ? '00:18' : state.phase === 'echo' ? '00:16' : '00:17'}</strong><div class="clock-rule"><i></i></div></div>
     <div class="mission"><div class="mission-signals">${['archive', 'radio', 'tide'].map(k => `<span class="signal-light ${state.solved[k] ? 'lit' : ''}" aria-label="${esc(t(`${k}Title`))}: ${state.solved[k] ? t('solved') : '—'}">${icon(k)}</span>`).join('')}<span>${countSolved()}<i>/</i>3</span></div><p>${esc(objective())}</p></div>
     </main>
-    <div class="side-tools">${button(icon('book') + `<span>${t('journal')}</span><b>${state.notes.length}</b>`, 'journal', 'journal-button', `aria-label="${t('journal')}"`)}${button(icon('help'), 'help', 'icon-button', `aria-label="${t('help')}"`)}${button(icon('settings'), 'settings', 'icon-button', `aria-label="${t('settings')}"`)}</div>
+    <div class="side-tools">${button(icon('book') + `<span>${t('journal')}</span><b>${state.notes.length}</b>`, 'journal', 'journal-button', `aria-label="${t('journal')}"`)}${button(icon('archive'), 'chapters', 'icon-button', `aria-label="${t('chapters')}"`)}${button(icon('help'), 'help', 'icon-button', `aria-label="${t('help')}"`)}${button(icon('settings'), 'settings', 'icon-button', `aria-label="${t('settings')}"`)}</div>
     <nav class="room-nav" aria-label="${t('map')}">${ROOM_IDS.map((id, i) => button(`<span class="nav-number">0${i + 1}</span>${icon(['dome', 'archive', 'radio', 'tide'][i])}<span>${esc(t(rooms[id].name))}</span>${state.solved[rooms[id].puzzle] || (id === 'observatory' && state.anchor) ? '<i class="nav-dot"></i>' : ''}`, `room:${id}`, state.room === id ? 'active' : '', `aria-current="${state.room === id ? 'location' : 'false'}"`)).join('')}</nav>
     <footer class="game-footer"><span>${t('credit')}</span><span>${saveAvailable ? '◦ ' + t('saved') : ''}</span></footer>`;
 }
@@ -190,6 +213,7 @@ function puzzleHTML(puzzle) {
 }
 
 function journalHTML() {
+  if (state.campaign.active > 1) return expedition().journal();
   const visible = state.notes.filter(id => journalFilter === 'all' || notes[id].room === journalFilter);
   return `<div class="journal-tabs" role="group" aria-label="${t('evidence')}">${['all',...ROOM_IDS].map(id => button(id === 'all' ? t('allEvidence') : esc(t(rooms[id].name)), `filter:${id}`, journalFilter === id ? 'active' : '', `aria-pressed="${journalFilter === id}"`)).join('')}</div><div class="journal-layout"><div class="journal-entries">${visible.length ? visible.map((id,i)=>`<article class="journal-entry"><div class="entry-meta"><span>${String(state.notes.indexOf(id)+1).padStart(2,'0')} / ${esc(t(rooms[notes[id].room].name))}</span><span class="entry-phase">${icon('phase')}${t(notes[id].phase)}</span></div><h3>${esc(t(notes[id].title))}</h3>${prose(t(notes[id].body))}</article>`).join('') : `<p class="body-copy">${t('noNotes')}</p>`}</div><aside class="personal-notes"><label for="personal-note">${t('fieldNotes')}</label><textarea id="personal-note" maxlength="4000" placeholder="${esc(t('notesPlaceholder'))}">${esc(state.personalNote)}</textarea><small>${t('personalSaved')} <span id="personal-counter">${state.personalNote.length}/4000</span></small></aside></div>`;
 }
@@ -197,19 +221,25 @@ function journalHTML() {
 function modalHTML() {
   if (!modal) return '';
   let title, eyebrow, content, cls = '';
-  if (modal.type === 'puzzle') {
+  if (modal.type === 'chapters' || modal.type.startsWith('chapter-')) {
+    const view = expedition().modal(modal.type, modal.id);
+    if (!view) return '';
+    ({title, eyebrow, content, cls} = view);
+  } else if (modal.type === 'puzzle') {
     title = t(`${modal.id}Title`); eyebrow = `${t('inspect')} / ${t(rooms[state.room].name)}`; content = puzzleHTML(modal.id); cls = `puzzle-modal ${modal.id}-modal`;
   } else if (modal.type === 'note') {
     const note = notes[modal.id]; title = t(note.title); eyebrow = `${t(rooms[note.room].name)} / ${t(note.phase)}`;
     content = `<div class="note-sheet">${prose(t(note.body))}<div class="note-stamp">${t('recorded')} ${icon('check')}</div></div>${button(t('back') + icon('arrow'), 'close', 'primary')}`; cls = 'note-modal';
   } else if (modal.type === 'journal') {
-    title = t('journal'); eyebrow = `${String(state.notes.length).padStart(2,'0')} ${t('collected')}`; content = journalHTML(); cls = 'journal-modal';
+    const c=state.campaign.chapters[state.campaign.active];
+    const entries=c ? c.inspected.length + Object.values(c.solved).filter(Boolean).length + Number(Boolean(state.ending)) + [2,3].filter(id=>state.campaign.chapters[id].complete).length : state.notes.length;
+    title = t('journal'); eyebrow = `${String(entries).padStart(2,'0')} ${t('collected')}`; content = journalHTML(); cls = 'journal-modal';
   } else if (modal.type === 'briefing' || modal.type === 'help') {
     title = t('briefingTitle'); eyebrow = 'PROLOGUE / 00:17'; content = `<div class="body-copy">${prose(t('briefingBody'))}</div><div class="control-guide">${icon('eye')}<p>${t('touchControls')}</p></div><p class="keyboard-guide">${t('controls')}</p>${button(t('beginInvestigation') + icon('arrow'), 'close', 'primary')}`;
   } else if (modal.type === 'settings') {
     title = t('settings'); eyebrow = 'SILENT MERIDIAN'; content = `<p class="body-copy">${t('settingsBody')}</p><div class="settings-list">${button(icon(state.sound?'sound':'mute') + t(state.sound?'soundOn':'soundOff'), 'sound', 'setting-row')}${button(icon('eye') + t(state.showHotspots?'hideMarkers':'showMarkers'), 'markers', 'setting-row')}${button(icon('dome') + t('titleScreen'), 'title', 'setting-row')}${button(icon('reset') + t('newGame'), 'restart', 'setting-row')}</div>`;
   } else if (modal.type === 'restart') {
-    title = t('resetTitle'); eyebrow = '00:17 → 00:17'; content = `<p class="body-copy">${t('resetBody')}</p><div class="confirm-actions">${button(t('cancel'), 'close', 'text-button')}${button(t('confirmReset'), 'confirm-restart', 'primary')}</div>`;
+    title = t('resetTitle'); eyebrow = 'I — IV / 00:17'; content = `<p class="body-copy">${t('resetAllBody')}</p><div class="confirm-actions">${button(t('cancel'), 'close', 'text-button')}${button(t('confirmReset'), 'confirm-restart', 'primary')}</div>`;
   } else if (modal.type === 'final-choice') {
     title = t('finishTitle'); eyebrow = '00:17:59'; content = `<div class="body-copy">${prose(t('finishBody'))}</div><div class="ending-choices">${button(icon('radio')+t('keepEcho'),'finish:keep','primary')}${button(icon('phase')+t('releaseEcho'),'finish:release','secondary')}</div>`;
   }
@@ -217,7 +247,8 @@ function modalHTML() {
 }
 
 function endingHTML() {
-  return `${sceneHTML()}<div class="ending-shade"></div><header class="topbar">${logo()}${commonTools()}</header><main class="ending-content"><div class="eyebrow">${t('finished')}</div><div class="ending-clock">00:18</div><div class="line"></div><h1>${t(state.ending === 'keep' ? 'endKeepTitle' : 'endReleaseTitle')}</h1><div class="ending-copy">${prose(t(state.ending === 'keep' ? 'endKeep' : 'endRelease'))}</div><div class="ending-actions">${button(t('reviewJournal')+icon('book'),'journal','secondary')}${button(t('exploreAfter')+icon('arrow'),'revisit','text-button')}</div></main>`;
+  if (state.campaign.active > 1) return expedition().ending();
+  return `${sceneHTML()}<div class="ending-shade"></div><header class="topbar">${logo()}${commonTools()}</header><main class="ending-content"><div class="eyebrow">I / IV · ${t('finished')}</div><div class="ending-clock">00:18</div><div class="line"></div><h1>${t(state.ending === 'keep' ? 'endKeepTitle' : 'endReleaseTitle')}</h1><div class="ending-copy">${prose(t(state.ending === 'keep' ? 'endKeep' : 'endRelease'))}</div><div class="ending-actions">${button(t('nextChapter')+icon('arrow'),'chapter-select:2','primary')}${button(t('reviewJournal')+icon('book'),'journal','text-button')}${button(t('exploreAfter')+icon('arrow'),'revisit','text-button')}</div></main>`;
 }
 
 function fitScene() {
@@ -236,8 +267,9 @@ function render() {
   const scrollTop = previousModal?.querySelector('.modal-scroll')?.scrollTop || 0;
   const openEvidence = app.querySelector('#evidence-peek')?.open;
   document.documentElement.lang = state.lang === 'zh' ? 'zh-CN' : 'en';
-  document.documentElement.dataset.phase = screen === 'title' ? 'present' : state.phase;
+  document.documentElement.dataset.phase = screen === 'title' ? 'present' : currentPhase();
   document.body.dataset.screen = screen;
+  document.body.dataset.chapter = String(state.campaign.active);
   document.title = `${t('title')} · ${state.lang === 'zh' ? 'Silent Meridian' : '静默子午线'}`;
   app.innerHTML = (screen === 'title' ? titleHTML() : screen === 'ending' ? endingHTML() : gameHTML()) + modalHTML();
   const img = app.querySelector('#scene-image');
@@ -261,18 +293,33 @@ app.addEventListener('click', async event => {
   if (!['sound','listen'].includes(action)) audio.tone(280, .07, 0, .05);
   if (action === 'lang') {state.lang = id; persist(); render();}
   else if (action === 'start') {
-    const first = !state.started; state.started = true; screen = state.ending ? 'ending' : 'game';
-    if (first) {addNote(state, 'welcome'); state.visits.push('observatory'); modal = {type:'briefing'};}
-    audio.enable(state.sound); persist(); render();
+    audio.enable(state.sound); enterChapter(state.campaign.active);
   } else if (action === 'sound') {state.sound = !state.sound; await audio.enable(state.sound); persist(); render();}
+  else if (action === 'chapters') openModal('chapters');
+  else if (action === 'chapter-select') enterChapter(Number(id));
+  else if (action === 'chapter-puzzle' && CHAPTER_PUZZLES[state.campaign.active]?.includes(id)) openModal('chapter-puzzle', id);
+  else if (action === 'chapter-notes') {
+    const chapter=state.campaign.chapters[state.campaign.active];
+    if (chapter) {if(!chapter.inspected.includes(chapter.phase))chapter.inspected.push(chapter.phase);persist();openModal('chapter-notes');}
+  }
+  else if (action === 'chapter-change') {if(changeChapterPuzzle(state,id,Number(a),Number(b))) {state.moves++;persist();render();}}
+  else if (action === 'chapter-reset') {if(resetChapterPuzzle(state,id)) {persist();render();}}
+  else if (action === 'chapter-hint' && CHAPTER_PUZZLES[state.campaign.active]?.includes(id)) {const c=state.campaign.chapters[state.campaign.active];c.hints[id]=Math.min(3,c.hints[id]+1);persist();render();}
+  else if (action === 'chapter-check') {
+    if (submitChapterPuzzle(state,id)) {audio.success();persist();render();toast(t('mechanismRestored'));}
+    else {const el=app.querySelector('#puzzle-feedback');if(el)el.textContent=t('wrong');audio.tone(95,.25,0,.18);}
+  }
+  else if (action === 'chapter-exit') openModal('chapter-exit');
+  else if (action === 'chapter-final') {const c=state.campaign.chapters[4];if(state.campaign.active===4 && Object.values(c.solved).every(Boolean) && c.phase==='present')openModal('chapter-final');}
+  else if (action === 'chapter-finish' && completeChapter(state,id)) {modal=null;screen='ending';persist();render();audio.success();}
   else if (action === 'room' && ROOM_IDS.includes(id)) visit(id);
-  else if (action === 'phase') {if(state.phase !== id) shift();}
+  else if (action === 'phase') {if(currentPhase() !== id) shift();}
   else if (action === 'shift') shift();
   else if (action === 'note' && notes[id]) {const isNew = addNote(state, id); persist(); openModal('note', id); if(isNew)toast(t('recorded'));}
   else if (action === 'puzzle') {selectedSlot = 0; openModal('puzzle', id);}
   else if (action === 'journal') {journalFilter = 'all'; openModal('journal');}
   else if (action === 'filter') {journalFilter = id; render();}
-  else if (action === 'help') openModal('help');
+  else if (action === 'help') openModal(state.campaign.active===1?'help':'chapter-briefing');
   else if (action === 'settings') openModal('settings');
   else if (action === 'markers') {state.showHotspots = !state.showHotspots; persist(); render();}
   else if (action === 'close') closeModal();
