@@ -4,8 +4,9 @@ An original atmospheric browser puzzle game in **four playable chapters with thi
 
 一款原创场景解谜网页游戏，包含 **四个可通关章节、十三道谜题**。从停在 **00:17** 的观测站出发，穿过无名渡站、玻璃温室，抵达第零座灯塔；在“现在”与“回声”中拼回完整的时间。
 
-![The playable opening](docs/screenshots/opening.png)
+![The observatory with 3D effects](docs/screenshots/depth-observatory.png)
 
+- Optional 3D effects: shaded brass mechanisms, perspective particles, layered camera movement, soft light shafts and water shimmer. All seven illustrated scenes have their own procedural geometry.
 - Seven original illustrated scenes across four chapters. The opening chapter retains its four freely explorable rooms.
 - Thirteen puzzles: ordering, frequencies, coupled tide gears, meridian alignment, constrained navigation, truth and lies, electrical toggles, mirror tracing, cultivation programs, specimen constraints, causality, layered shadows, and a final coordinate synthesis.
 - Sequential chapter unlocks, a chapter directory, independent progress, carried evidence, and revisits. The opening chapter’s choice is remembered in both final endings.
@@ -29,6 +30,8 @@ Open [localhost:4188](http://localhost:4188). Use `PORT=4189 npm run dev` if tha
 ## Controls
 
 Click or tap glowing objects to inspect them. The bottom navigation changes rooms in chapter I and opens mechanisms in chapters II–IV. Inspect each new location’s record in both time states. **Space** shifts time when focus is on the scene, **J** opens the journal, and **Esc** closes a dialog or opens settings. Focused buttons also support standard keyboard activation.
+
+The **3D** button at the top right toggles the effects and remembers your preference. Move the mouse across the scenery to see its depth; touch screens use a subtle drift. The camera pauses while dialogs are open. Reduced-motion mode keeps the 3D view still, and devices without WebGL use the original artwork with all puzzles available.
 
 The journal keeps collected evidence and your own deductions. Puzzle panels provide access to relevant evidence and optional hints. No audio puzzle requires hearing: tuning values and waveforms are visible.
 
@@ -63,11 +66,14 @@ src/campaign.js   New puzzle engines, chapter gates and save validation
 src/chapters.js   Bilingual chapter stories, evidence and hints
 src/expedition.js Chapter scenes, mechanisms, journal and endings
 src/audio.js      Optional audio synthesized in the browser
+src/scene-depth.js Reusable WebGL renderer and clue-marker projection
 src/style.css    Responsive visual design
 assets/          Local scene art and icon
 tests/           Puzzle uniqueness, reachability, progression and save tests
 docs/            Original design, solutions and art provenance
 ```
+
+Created by [stackloomdev](https://github.com/stackloomdev) with GPT-6 Astra in Codex through multiple iterations. See the [creation record and model contribution](docs/CREATION.md).
 
 The story, puzzle connections, and implementation were created for this project. Scene backgrounds were generated specifically for it without reference images. See [art provenance](docs/ART.md) and [puzzle design and solutions](docs/DESIGN.md) (spoilers).
 
@@ -76,6 +82,8 @@ The story, puzzle connections, and implementation were created for this project.
 现在共有四章、十三道谜题。完成上一章后，下一章会解锁；标题画面和游戏内都有章节目录。切换章节会保留每章的进度，前面章节的关键结果也会收进随身记录，供终章使用。
 
 现有第一章存档会自动保留。所有未完成的机关都能复位；错误尝试不会丢失线索。三层提示可以逐步展开，潮汐与电桥的最后一层提示会根据当前状态计算解法。游戏全程支持中英文。
+
+七个场景均加入可关闭的 3D 视效：立体青铜机关、镜头视差、浮尘、柔光与水面微光。移动鼠标可以感受景深，触屏下会轻缓漂移；调查机关时画面停稳。右上角 **3D** 开关会记住选择，系统“减少动态效果”模式保留静态立体画面，不支持 WebGL 的设备仍可正常解谜。
 
 本项目是独立游戏，运行代码与素材均位于自己的目录。默认服务端口为 `4188`。部署 Vercel 使用 `npm run build`，输出目录为 `dist`。
 

@@ -14,7 +14,7 @@ export const equal = (a, b) => Array.isArray(a) && a.length === b.length && a.ev
 export const mod = (n, m) => ((n % m) + m) % m;
 
 export function freshState(lang = 'zh') {
-  return { version: VERSION, lang: lang === 'en' ? 'en' : 'zh', started: false, room: 'observatory', phase: 'present', notes: [], solved: { archive: false, radio: false, tide: false }, archive: [null, null, null, null, null], radio: [0, 0, 0], tide: [...TIDE_INITIAL], meridian: [0, 0, 0], anchor: false, ending: null, hints: { archive: 0, radio: 0, tide: 0, meridian: 0 }, sound: false, showHotspots: true, visits: [], personalNote: '', moves: 0, campaign: freshCampaign() };
+  return { version: VERSION, lang: lang === 'en' ? 'en' : 'zh', started: false, room: 'observatory', phase: 'present', notes: [], solved: { archive: false, radio: false, tide: false }, archive: [null, null, null, null, null], radio: [0, 0, 0], tide: [...TIDE_INITIAL], meridian: [0, 0, 0], anchor: false, ending: null, hints: { archive: 0, radio: 0, tide: 0, meridian: 0 }, sound: false, depth: true, showHotspots: true, visits: [], personalNote: '', moves: 0, campaign: freshCampaign() };
 }
 
 export function addNote(state, id) {
@@ -82,7 +82,7 @@ export function hydrate(raw, lang = 'zh') {
   const state = freshState(lang);
   if (!raw || ![1, VERSION].includes(raw.version)) return state;
   if (['zh', 'en'].includes(raw.lang)) state.lang = raw.lang;
-  for (const key of ['started', 'sound', 'showHotspots']) if (typeof raw[key] === 'boolean') state[key] = raw[key];
+  for (const key of ['started', 'sound', 'depth', 'showHotspots']) if (typeof raw[key] === 'boolean') state[key] = raw[key];
   if (ROOM_IDS.includes(raw.room)) state.room = raw.room;
   if (['present', 'echo'].includes(raw.phase)) state.phase = raw.phase;
   state.notes = Array.isArray(raw.notes) ? [...new Set(raw.notes.filter(id => NOTE_IDS.includes(id)))] : [];

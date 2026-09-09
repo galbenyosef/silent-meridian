@@ -36,3 +36,22 @@ Checked actual DOM geometry and hit testing of every scene hotspot, navigation b
 Fixed during verification: low scene markers near navigation, long English labels intersecting on small scenes, a long heading colliding with its description at 320 pixels, narrow-screen side-tool placement, chapter-directory started status, and current-chapter journal counts.
 
 An independent code review found no important remaining issue after these changes. Browser emulation is not physical Android/iOS device testing. The viewport override and temporary test tab/server were cleaned up after verification.
+
+## 3D effects — 2026-09-09
+
+`npm test`: **38 passing tests**. `npm run build` and `git diff --check` pass. New automated checks cover strict migration of the saved 3D preference, bounded render-buffer sizes, and alignment between illustrated objects and projected clue markers throughout the camera range.
+
+Browser verification used isolated Chromium contexts and valid saved-game fixtures created through the actual puzzle engines. These fixtures make every location available for visual regression; this was not a second complete manual campaign playthrough, and the user's save was not replaced.
+
+- **58 scene/layout checks**: all seven scenes in desktop Present/Echo, plus Echo at 390 × 844, 844 × 390 and 320 × 640 in both languages; one check after context restoration and one on an emulated touch device. Every hotspot, navigation button, header control and side tool remained in bounds and hit-testable, with no horizontal overflow.
+- Opened a real instrument from each scene and verified that continuous WebGL drawing pauses while its dialog is open.
+- Toggled effects sixteen times without changing puzzle progress or notes; one WebGL context was reused across rerenders. The disabled preference survived a reload, and the settings control could re-enable it.
+- Simulated WebGL context loss, switched rooms while using the original artwork, and restored the context. The renderer recovered the new room correctly.
+- Reduced-motion mode performed no continuous drawing after settling. The settings text explained its static appearance.
+- An emulated touch device at pixel ratio 3 stayed within the 700,000-pixel render budget, and a real tap opened the mirror instrument.
+- With WebGL unavailable, the original scene remained usable and a real archive interaction still placed a symbol.
+- The built `dist/` was served under `/silent-meridian/`. All four opening rooms, mobile backdrop images and the 3D toggle worked with no missing resources. Verification exposed and fixed an existing mobile CSS backdrop URL that had resolved relative to `src/style.css` instead of the page.
+
+The final browser runs reported **no page, resource-loading or WebGL errors**. Desktop captures of all seven scenes and representative phone captures were visually inspected; the current observatory capture is retained as `docs/screenshots/depth-observatory.png`.
+
+An independent code review found no blocking issue, including in resource lifecycle, dialog/motion handling, save compatibility and the deployment-path fix. Browser emulation does not replace physical Android/iOS testing. The user's original local preview was refreshed and resumed with its existing save.

@@ -1,6 +1,7 @@
 import { freshState, loadState, saveState, addNote, placeSymbol, turnTide, tidePlan, solvePuzzle, allCalibrated, canFinish, finish, mod, TIDE_INITIAL, SYMBOL_IDS, ROOM_IDS } from './game.js';
 import { words, rooms, notes, symbols, puzzleNotes, hints } from './content.js';
 import { Atmosphere } from './audio.js';
+import { SceneDepth } from './scene-depth.js';
 import { CHAPTER_PUZZLES, selectChapter, submitChapterPuzzle, changeChapterPuzzle, resetChapterPuzzle, completeChapter } from './campaign.js';
 import { expeditionView } from './expedition.js';
 
@@ -18,6 +19,7 @@ let toastTimer;
 let lastFocus = null;
 let noSaveShown = false;
 const audio = new Atmosphere();
+const sceneDepth = new SceneDepth(syncDepthControls);
 const t = value => Array.isArray(value) ? value[state.lang === 'zh' ? 0 : 1] : (words[value]?.[state.lang === 'zh' ? 0 : 1] || value);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const prose = text => text.split('\n\n').map(p => `<p>${esc(p).replaceAll('\n', '<br>')}</p>`).join('');
@@ -93,7 +95,7 @@ function shift() {
 
 function sceneHTML() {
   const room = screen === 'title' ? 'observatory' : state.room;
-  return `<div class="stage ${screen === 'title' ? 'title-stage' : ''} ${state.phase === 'echo' && screen !== 'title' ? 'is-echo' : ''}" style="--room-art:url('./assets/${room}.png')" aria-hidden="${screen === 'title'}">
+  return `<div class="stage ${screen === 'title' ? 'title-stage' : ''} ${state.phase === 'echo' && screen !== 'title' ? 'is-echo' : ''}" aria-hidden="${screen === 'title'}">
     <div class="world" id="world"><img class="scene-image" id="scene-image" src="./assets/${room}.png" alt="${esc(t(rooms[room].description))}" draggable="false">${screen === 'game' ? hotspotHTML() : ''}</div>
     <div class="scene-vignette"></div><div class="mist mist-one"></div><div class="mist mist-two"></div>
     <div class="dust">${Array.from({length: 15}, (_, i) => `<i style="--x:${(i * 137.51) % 100}%;--delay:${-i * 2.7}s;--duration:${16 + i % 6 * 3}s"></i>`).join('')}</div>
@@ -114,8 +116,29 @@ function hotspotHTML() {
   return `<div class="hotspots ${state.showHotspots ? 'show-markers' : ''}">${points.map(point => button(`<span class="point-mark">${icon(point.icon)}</span><span class="point-label">${esc(t(point.label))}${point.done ? `<small>${t('collected')}</small>` : ''}</span>`, point.action, `hotspot ${point.done ? 'done' : ''} ${point.position[0] > 75 ? 'edge-right' : point.position[0] < 25 ? 'edge-left' : ''}`, `style="left:${point.position[0]}%;top:${point.position[1]}%" aria-label="${esc(t(point.label))}"`)).join('')}</div>`;
 }
 
+function syncDepthControls(status) {
+  const available = status !== 'unavailable';
+  for (const control of app.querySelectorAll('[data-action="depth"]')) {
+    control.disabled = !available;
+    control.setAttribute('aria-pressed', String(available && state.depth));
+    const description = t(!available ? 'depthUnavailable' : state.depth ? 'depthDisable' : 'depthEnable');
+    control.setAttribute('aria-label', description);
+    control.title = description;
+    const label = control.querySelector('.depth-setting-label');
+    if (label) label.textContent = description;
+  }
+  const description = app.querySelector('.depth-description');
+  if (description) description.textContent = t(!available ? 'depthUnavailable' : status === 'still' ? 'depthStill' : 'depthDescription');
+}
+
+function depthControl(setting = false) {
+  const cube = '<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="m12 2 9 5v10l-9 5-9-5V7Z M3 7l9 5 9-5M12 12v10M7.5 4.5l9 5v5"/></svg>';
+  const description = t(state.depth ? 'depthDisable' : 'depthEnable');
+  return button(cube + (setting ? `<span class="depth-setting-label">${description}</span><b>3D</b>` : '<span>3D</span>'), 'depth', setting ? 'setting-row depth-setting' : 'depth-control', `aria-pressed="${state.depth}" aria-label="${description}" title="${description}"`);
+}
+
 function commonTools() {
-  return `<div class="header-tools"><div class="languages" role="group" aria-label="Language">${button('中', 'lang:zh', state.lang === 'zh' ? 'active' : '', `aria-pressed="${state.lang === 'zh'}" aria-label="切换至中文"`)}<span>/</span>${button('EN', 'lang:en', state.lang === 'en' ? 'active' : '', `aria-pressed="${state.lang === 'en'}" aria-label="Switch to English"`)}</div>${button(icon(state.sound ? 'sound' : 'mute'), 'sound', 'icon-button', `aria-label="${t(state.sound ? 'soundOn' : 'soundOff')}" title="${t(state.sound ? 'soundOn' : 'soundOff')}"`)}</div>`;
+  return `<div class="header-tools">${depthControl()}<div class="languages" role="group" aria-label="Language">${button('中', 'lang:zh', state.lang === 'zh' ? 'active' : '', `aria-pressed="${state.lang === 'zh'}" aria-label="切换至中文"`)}<span>/</span>${button('EN', 'lang:en', state.lang === 'en' ? 'active' : '', `aria-pressed="${state.lang === 'en'}" aria-label="Switch to English"`)}</div>${button(icon(state.sound ? 'sound' : 'mute'), 'sound', 'icon-button', `aria-label="${t(state.sound ? 'soundOn' : 'soundOff')}" title="${t(state.sound ? 'soundOn' : 'soundOff')}"`)}</div>`;
 }
 
 function titleHTML() {
@@ -237,7 +260,7 @@ function modalHTML() {
   } else if (modal.type === 'briefing' || modal.type === 'help') {
     title = t('briefingTitle'); eyebrow = 'PROLOGUE / 00:17'; content = `<div class="body-copy">${prose(t('briefingBody'))}</div><div class="control-guide">${icon('eye')}<p>${t('touchControls')}</p></div><p class="keyboard-guide">${t('controls')}</p>${button(t('beginInvestigation') + icon('arrow'), 'close', 'primary')}`;
   } else if (modal.type === 'settings') {
-    title = t('settings'); eyebrow = 'SILENT MERIDIAN'; content = `<p class="body-copy">${t('settingsBody')}</p><div class="settings-list">${button(icon(state.sound?'sound':'mute') + t(state.sound?'soundOn':'soundOff'), 'sound', 'setting-row')}${button(icon('eye') + t(state.showHotspots?'hideMarkers':'showMarkers'), 'markers', 'setting-row')}${button(icon('dome') + t('titleScreen'), 'title', 'setting-row')}${button(icon('reset') + t('newGame'), 'restart', 'setting-row')}</div>`;
+    title = t('settings'); eyebrow = 'SILENT MERIDIAN'; content = `<p class="body-copy">${t('settingsBody')}</p><div class="settings-list">${depthControl(true)}<p class="depth-description">${t('depthDescription')}</p>${button(icon(state.sound?'sound':'mute') + t(state.sound?'soundOn':'soundOff'), 'sound', 'setting-row')}${button(icon('eye') + t(state.showHotspots?'hideMarkers':'showMarkers'), 'markers', 'setting-row')}${button(icon('dome') + t('titleScreen'), 'title', 'setting-row')}${button(icon('reset') + t('newGame'), 'restart', 'setting-row')}</div>`;
   } else if (modal.type === 'restart') {
     title = t('resetTitle'); eyebrow = 'I — IV / 00:17'; content = `<p class="body-copy">${t('resetAllBody')}</p><div class="confirm-actions">${button(t('cancel'), 'close', 'text-button')}${button(t('confirmReset'), 'confirm-restart', 'primary')}</div>`;
   } else if (modal.type === 'final-choice') {
@@ -259,6 +282,7 @@ function fitScene() {
   const scale = (contain ? Math.min : Math.max)(w / img.naturalWidth, h / img.naturalHeight);
   world.style.width = `${img.naturalWidth * scale}px`;
   world.style.height = `${img.naturalHeight * scale}px`;
+  sceneDepth.resize();
 }
 
 function render() {
@@ -273,7 +297,16 @@ function render() {
   document.title = `${t('title')} · ${state.lang === 'zh' ? 'Silent Meridian' : '静默子午线'}`;
   app.innerHTML = (screen === 'title' ? titleHTML() : screen === 'ending' ? endingHTML() : gameHTML()) + modalHTML();
   const img = app.querySelector('#scene-image');
+  // Resolve the CSS backdrop against the page, including static-host subpaths.
+  app.querySelector('.stage').style.setProperty('--room-art', `url("${img.src}")`);
   img.addEventListener('load', fitScene, { once: true }); fitScene();
+  const room = img.getAttribute('src').split('/').pop().replace('.png', '');
+  sceneDepth.attach(app.querySelector('#world'), {
+    room, enabled: state.depth, paused: Boolean(modal),
+    echo: screen !== 'title' && currentPhase() === 'echo',
+    solved: screen === 'title' ? 0 : state.campaign.active === 1 ? countSolved() : Object.values(state.campaign.chapters[state.campaign.active].solved).filter(Boolean).length,
+  });
+  app.querySelector('.stage').dataset.depthPaused = String(Boolean(modal));
   if (modal) {
     const dialog = app.querySelector('#modal');
     dialog.showModal();
@@ -321,12 +354,13 @@ app.addEventListener('click', async event => {
   else if (action === 'filter') {journalFilter = id; render();}
   else if (action === 'help') openModal(state.campaign.active===1?'help':'chapter-briefing');
   else if (action === 'settings') openModal('settings');
+  else if (action === 'depth') {state.depth = !state.depth; persist(); render();}
   else if (action === 'markers') {state.showHotspots = !state.showHotspots; persist(); render();}
   else if (action === 'close') closeModal();
   else if (action === 'title') {modal = null; screen = 'title'; render();}
   else if (action === 'restart') openModal('restart');
   else if (action === 'confirm-restart') {
-    const {lang, sound} = state; state = freshState(lang); state.sound = sound; state.started = true; state.visits = ['observatory']; addNote(state,'welcome');
+    const {lang, sound, depth} = state; state = freshState(lang); state.sound = sound; state.depth = depth; state.started = true; state.visits = ['observatory']; addNote(state,'welcome');
     screen = 'game'; modal = {type:'briefing'}; selectedSlot = 0; persist(); render();
   } else if (action === 'slot') {selectedSlot = Number(id); render();}
   else if (action === 'symbol' && !state.solved.archive) {

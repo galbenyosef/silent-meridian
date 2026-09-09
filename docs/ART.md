@@ -31,3 +31,9 @@ Three additional backgrounds were generated with the same built-in OpenAI image 
 - `assets/lighthouse.png`: original 16:9 interior of the zeroth lighthouse before dawn; open circular basalt hall, ash-violet sky, thin rose-gold horizon, floating brass ring, causal tablets to the left, celestial compass in the center, shutter console on the right, blank stone door beyond. Quiet painterly architectural realism; no people, lettering, UI, or existing-game references.
 
 The nine new instruments, live beam, growth preview, route and layered-shadow diagrams are drawn by the game in HTML/CSS/SVG. Exact diagrams remain independent of the decorative backgrounds.
+
+## Procedural 3D effects — 2026-09-09
+
+`src/scene-depth.js` adds original WebGL geometry and shaders over the seven existing illustrations. The brass rings and faceted crystals are generated mathematically in code; no third-party model, texture, renderer or runtime service is used. Each location has a different arrangement, with shaded surfaces, subtle camera parallax, perspective particles, light shafts and water shimmer where appropriate.
+
+The illustrated architecture remains the background rather than a walkable 3D world. Decorative movement does not change clues or puzzle rules. Clickable markers follow the same projection as their illustrated objects. The original artwork remains available whenever effects are disabled or WebGL is unavailable.
