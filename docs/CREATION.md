@@ -2,6 +2,7 @@
 
 **Creator / 作者:** [stackloomdev](https://github.com/stackloomdev)  
 **Project / 项目:** [Silent Meridian · 静默子午线](https://github.com/stackloomdev/silent-meridian)  
+**Play / 在线试玩:** [Open the game / 进入游戏](https://silent-meridian.stackloom.org/)<br>
 **Recorded version / 记录版本:** 1.2.0, 2026-09-09
 
 Silent Meridian was developed with **GPT-6 Astra in Codex**, through iterative collaboration with the creator. The creator set the direction: an original, mysterious browser game with demanding puzzles, an independent repository, additional playable chapters, and later 3D visual effects.

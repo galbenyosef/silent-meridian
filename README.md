@@ -4,6 +4,8 @@ An original atmospheric browser puzzle game in **four playable chapters with thi
 
 一款原创场景解谜网页游戏，包含 **四个可通关章节、十三道谜题**。从停在 **00:17** 的观测站出发，穿过无名渡站、玻璃温室，抵达第零座灯塔；在“现在”与“回声”中拼回完整的时间。
 
+**[Play online · 在线试玩](https://silent-meridian.stackloom.org/)** — Free, no login or installation. / 免费，无需登录或安装。
+
 ![The observatory with 3D effects](docs/screenshots/depth-observatory.png)
 
 - Optional 3D effects: shaded brass mechanisms, perspective particles, layered camera movement, soft light shafts and water shimmer. All seven illustrated scenes have their own procedural geometry.
